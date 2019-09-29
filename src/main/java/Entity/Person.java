@@ -44,12 +44,12 @@ public class Person implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
-    @NotNull
+//    @NotNull
     @Column(name = "ID")
     private Integer id;
     
     @Size(max = 255)
-    @NotNull
+//    @NotNull
     @Column(name = "FULLNAME")
     private String fullname;
     

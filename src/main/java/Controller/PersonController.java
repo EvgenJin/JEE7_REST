@@ -65,7 +65,12 @@ public class PersonController {
         if (person.getDateOfBirth() == null) {
             return Response.serverError().status(Response.Status.BAD_REQUEST).entity("не указана дата рождения").build();
         }
-        System.err.println(person.getDateOfBirth());
+        if (person.getFullname() == null) {
+            return Response.serverError().status(Response.Status.BAD_REQUEST).entity("не указано ФИО").build();
+        }
+        if (person.getSex() == null) {
+            return Response.serverError().status(Response.Status.BAD_REQUEST).entity("не указан пол").build();
+        }
         personDao.create(person);
         return Response.ok().build();
     }
