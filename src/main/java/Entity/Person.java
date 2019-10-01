@@ -74,6 +74,16 @@ public class Person implements Serializable {
 
     public Person() {
     }
+    
+    public void setPerson(Person person) {
+        this.addres = person.getAddres();
+        this.dateOfBirth = person.getDateOfBirth();
+        this.fullname = person.getFullname();
+        this.id = person.getId();
+        this.inn = person.getInn();
+        this.pfr = person.getPfr();
+        this.sex = person.getSex();
+    }    
 
     public Person(Integer id) {
         this.id = id;
@@ -159,5 +169,7 @@ public class Person implements Serializable {
     public String toString() {
         return "Entity.Person[ id=" + id + " ]";
     }
+
+
     
 }

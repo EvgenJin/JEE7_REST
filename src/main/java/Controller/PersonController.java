@@ -33,16 +33,11 @@ public class PersonController {
     @GET
     public Response getAll() {
         List<Person> persons = personDao.getAll();
+            if (persons == null) {
+                    throw new RuntimeException("Can't load all messages");
+            }        
         return Response.ok(persons).build();
     }
-//    @GET
-//    public List<Person> getAll() {
-//            List<Person> persons = personDao.getAll();
-//            if (persons == null) {
-//                    throw new RuntimeException("Can't load all messages");
-//            }
-//            return persons;
-//    }    
 
     @GET
     @Path("{id}")
@@ -55,23 +50,32 @@ public class PersonController {
     @Path("{id}")
     public Response update(@PathParam("id") Integer id, Person person) {
         Person updatePerson = personDao.findById(id);
-//        updatePerson.setPerson(person);
+        updatePerson.setPerson(person);
         personDao.update(updatePerson);
         return Response.ok().build();
     }
 
     @POST
     public Response create(@Valid Person person) {
-        if (person.getDateOfBirth() == null) {
-            return Response.serverError().status(Response.Status.BAD_REQUEST).entity("не указана дата рождения").build();
+        try {
+            personDao.create(person);
+            if (person.getDateOfBirth() == null) {
+                return Response.serverError().status(Response.Status.BAD_REQUEST).entity("не указана дата рождения в формате yyyy-mm-dd").build();
+            }
+            if (person.getFullname() == null) {
+                return Response.serverError().status(Response.Status.BAD_REQUEST).entity("не указано ФИО").build();
+            }       
+            if (person.getSex() == null) {
+                return Response.serverError().status(Response.Status.BAD_REQUEST).entity("не указан пол").build();
+            }
+        }catch(Exception e) {
+            e.getMessage();
+            System.err.println(e.getMessage());
+            Response.serverError().status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+//            throw e;
+        } finally {
+//            System.err.println();
         }
-        if (person.getFullname() == null) {
-            return Response.serverError().status(Response.Status.BAD_REQUEST).entity("не указано ФИО").build();
-        }
-        if (person.getSex() == null) {
-            return Response.serverError().status(Response.Status.BAD_REQUEST).entity("не указан пол").build();
-        }
-        personDao.create(person);
         return Response.ok().build();
     }
 
