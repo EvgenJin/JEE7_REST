@@ -5,7 +5,7 @@
  */
 package Dao;
 
-import Entity.Person;
+import Entity.Orders;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -13,36 +13,36 @@ import javax.persistence.PersistenceContext;
 
 /**
  *
- * @author admin
+ * @author eshahov
  */
 @Stateless
-public class PersonDao {
+public class OrdersDao {
     
     @PersistenceContext(unitName = "pers")
     EntityManager em;
     
     public List getAll() {
-        return em.createNamedQuery("Person.findAll", Person.class).getResultList();
+        return em.createNamedQuery("Orders.findAll", Orders.class).getResultList();
     }
 
-    public Person findById(Long id) {
-        return em.find(Person.class, id);
+    public Orders findById(Long id) {
+        return em.find(Orders.class, id);
     }
 
-    public void update(Person person) {
-        em.merge(person);
+    public void update(Orders orders) {
+        em.merge(orders);
     }
 
-    public void create(Person person) {
-        em.persist(person);
+    public void create(Orders orders) {
+        em.persist(orders);
     }
 
-    public void delete(Person person) {
-        if (!em.contains(person)) {
-            person = em.merge(person);
+    public void delete(Orders orders) {
+        if (!em.contains(orders)) {
+            orders = em.merge(orders);
         }
 
-        em.remove(person);
+        em.remove(orders);
     }    
     
 }

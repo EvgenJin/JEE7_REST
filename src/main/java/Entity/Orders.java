@@ -5,55 +5,88 @@
  */
 package Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author admin
+ * @author eshahov
  */
 @Entity
-@Table(name = "ORDERS", catalog = "", schema = "EVGEN")
+@Table(name = "ORDERS")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Orders.findAll", query = "SELECT o FROM Orders o")
     , @NamedQuery(name = "Orders.findById", query = "SELECT o FROM Orders o WHERE o.id = :id")
-    , @NamedQuery(name = "Orders.findByPrice", query = "SELECT o FROM Orders o WHERE o.price = :price")
-    , @NamedQuery(name = "Orders.findByTitle", query = "SELECT o FROM Orders o WHERE o.title = :title")
     , @NamedQuery(name = "Orders.findByDescription", query = "SELECT o FROM Orders o WHERE o.description = :description")
-    , @NamedQuery(name = "Orders.findByOrderid", query = "SELECT o FROM Orders o WHERE o.orderid = :orderid")})
+    , @NamedQuery(name = "Orders.findByOrderid", query = "SELECT o FROM Orders o WHERE o.orderid = :orderid")
+    , @NamedQuery(name = "Orders.findByPrice", query = "SELECT o FROM Orders o WHERE o.price = :price")
+    , @NamedQuery(name = "Orders.findByTitle", query = "SELECT o FROM Orders o WHERE o.title = :title")})
 public class Orders implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
     @NotNull
     @Column(name = "ID")
     private Long id;
-    @Column(name = "PRICE")
-    private Long price;
     @Size(max = 255)
-    @Column(name = "TITLE")
-    private String title;
-    @Size(max = 1999)
     @Column(name = "DESCRIPTION")
     private String description;
     @Column(name = "ORDERID")
-    private Long orderid;
-    @JoinColumn(name = "PERSON_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private Person personId;
+    private BigInteger orderid;
+    @Column(name = "PRICE")
+    private BigInteger price;
+    @Size(max = 255)
+    @Column(name = "TITLE")
+    private String title;
+//    @JoinTable(name = "PERSON_ORDERS", joinColumns = {
+//        @JoinColumn(name = "ORDERS_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
+//        @JoinColumn(name = "PERSON_ID", referencedColumnName = "ID")})
+//    @ManyToMany
+//    private List<Person> personList;
+//    @JoinColumn(name = "PERSON_ID", referencedColumnName = "ID")
+//    @ManyToOne
+//    private Person personId;
+//    @ManyToOne(fetch=FetchType.LAZY)
+//    @JoinColumn(name="ID")
+//    private Person person;    
+   
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "PERSON_ID", nullable = false)
+    @JsonBackReference
+    private Person person;
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
 
     public Orders() {
     }
@@ -70,11 +103,27 @@ public class Orders implements Serializable {
         this.id = id;
     }
 
-    public Long getPrice() {
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public BigInteger getOrderid() {
+        return orderid;
+    }
+
+    public void setOrderid(BigInteger orderid) {
+        this.orderid = orderid;
+    }
+
+    public BigInteger getPrice() {
         return price;
     }
 
-    public void setPrice(Long price) {
+    public void setPrice(BigInteger price) {
         this.price = price;
     }
 
@@ -85,30 +134,30 @@ public class Orders implements Serializable {
     public void setTitle(String title) {
         this.title = title;
     }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Long getOrderid() {
-        return orderid;
-    }
-
-    public void setOrderid(Long orderid) {
-        this.orderid = orderid;
-    }
-
-    public Person getPersonId() {
-        return personId;
-    }
-
-    public void setPersonId(Person personId) {
-        this.personId = personId;
-    }
+    
+//    public Person getPerson() {
+//        return person;
+//    }
+//
+//    public void setPerson(Person person) {
+//        this.person = person;
+//    }
+//    @XmlTransient
+//    public List<Person> getPersonList() {
+//        return personList;
+//    }
+//
+//    public void setPersonList(List<Person> personList) {
+//        this.personList = personList;
+//    }
+//
+//    public Person getPersonId() {
+//        return personId;
+//    }
+//
+//    public void setPersonId(Person personId) {
+//        this.personId = personId;
+//    }
 
     @Override
     public int hashCode() {

@@ -6,17 +6,14 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import Tools.functions;
@@ -41,14 +38,14 @@ public class PersonController {
 
     @GET
     @Path("{id}")
-    public Response getTodo(@PathParam("id") Integer id) {
+    public Response getTodo(@PathParam("id") Long id) {
         Person person = personDao.findById(id);
         return Response.ok(person).build();
     }
 
     @PUT
     @Path("{id}")
-    public Response update(@PathParam("id") Integer id, Person person) {
+    public Response update(@PathParam("id") Long id, Person person) {
         Person updatePerson = personDao.findById(id);
         updatePerson.setPerson(person);
         personDao.update(updatePerson);
@@ -73,15 +70,13 @@ public class PersonController {
             System.err.println(e.getMessage());
             Response.serverError().status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 //            throw e;
-        } finally {
-//            System.err.println();
-        }
+        } finally {}
         return Response.ok().build();
     }
 
     @DELETE
     @Path("{id}")
-    public Response delete(@PathParam("id") Integer id) {
+    public Response delete(@PathParam("id") Long id) {
         Person getPerson = personDao.findById(id);
         personDao.delete(getPerson);
         return Response.ok().build();
