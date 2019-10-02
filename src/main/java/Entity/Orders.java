@@ -73,9 +73,12 @@ public class Orders implements Serializable {
 //    @ManyToOne(fetch=FetchType.LAZY)
 //    @JoinColumn(name="ID")
 //    private Person person;    
-   
+    // CascadeType.ALL все операции изменения в коллекции (добавление/изменение) отражает в базе данных   
+    // FetchType.EAGER – Предусматривает получение полной связи между сущностями, и последующих обращениях к связям не будет выполнять запрос на получение данных, тк данные изначально получены полностью.
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    // @JoinColumn указывает, что этот объект является владельцем отношения (то есть: соответствующая таблица имеет столбец с внешним ключом в ссылочной таблице)
     @JoinColumn(name = "PERSON_ID", nullable = false)
+    //чтобы не было рекурсии по персонам - ордерам -  персонам
     @JsonBackReference
     private Person person;
 
