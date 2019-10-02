@@ -79,7 +79,7 @@ public class Person implements Serializable {
 //    @OneToMany(mappedBy = "person")
 //    private List<Orders> orders;
     
-    //mappedBy указывает, что объект в этом сторонe является обратной зависимостью, а владелец находится в "другой" сущности.
+    // mappedBy указывает, что объект в этом сторонe является обратной зависимостью, а владелец находится в "другой" сущности.
     @OneToMany(mappedBy = "person", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     //чтобы не было рекурсии по ордерам - персонам - ордерам
     @JsonManagedReference
