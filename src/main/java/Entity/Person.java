@@ -9,7 +9,7 @@ package Entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -52,14 +52,14 @@ public class Person implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
+//    @NotNull
     @Column(name = "ID")
     private Long id;
     @Size(max = 255)
     @Column(name = "ADDRES")
     private String addres;
     @Column(name = "DATE_OF_BIRTH")
-    @Temporal(TemporalType.TIMESTAMP)
+//    @Temporal(TemporalType.TIMESTAMP)
     private Date dateOfBirth;
     @Size(max = 255)
     @Column(name = "FULLNAME")
@@ -72,13 +72,16 @@ public class Person implements Serializable {
     @Size(max = 255)
     @Column(name = "SEX")
     private String sex;
-//    @ManyToMany(mappedBy = "personList")
-//    private List<Orders> ordersList;
-//    @OneToMany(mappedBy = "personId")
-//    private List<Orders> ordersList1;
-//    @OneToMany(mappedBy = "person")
-//    private List<Orders> orders;
-    
+    @Size(max = 255)
+    @Column(name = "F_NAME")
+    private String fname;
+    @Size(max = 255)
+    @Column(name = "S_NAME")
+    private String sname;
+    @Size(max = 255)
+    @Column(name = "T_NAME")
+    private String tname;
+   
     // mappedBy указывает, что объект в этом сторонe является обратной зависимостью, а владелец находится в "другой" сущности.
     @OneToMany(mappedBy = "person", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     //чтобы не было рекурсии по ордерам - персонам - ордерам
@@ -168,30 +171,29 @@ public class Person implements Serializable {
         this.sex = sex;
     }
 
-//    public List<Orders> getOrders() {
-//        return orders;
-//    }
-//
-//    public void setOrders(List<Orders> orders) {
-//        this.orders = orders;
-//    }    
-//    @XmlTransient
-//    public List<Orders> getOrdersList() {
-//        return ordersList;
-//    }
-//
-//    public void setOrdersList(List<Orders> ordersList) {
-//        this.ordersList = ordersList;
-//    }
+    public String getFname() {
+        return fname;
+    }
 
-//    @XmlTransient
-//    public List<Orders> getOrdersList1() {
-//        return ordersList1;
-//    }
-//
-//    public void setOrdersList1(List<Orders> ordersList1) {
-//        this.ordersList1 = ordersList1;
-//    }
+    public void setFname(String fname) {
+        this.fname = fname;
+    }
+
+    public String getSname() {
+        return sname;
+    }
+
+    public void setSname(String sname) {
+        this.sname = sname;
+    }
+
+    public String getTname() {
+        return tname;
+    }
+
+    public void setTname(String tname) {
+        this.tname = tname;
+    }
 
     @Override
     public int hashCode() {

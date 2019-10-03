@@ -17,6 +17,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import Tools.functions;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 
 @RequestScoped
 @Path("person")
@@ -28,6 +30,7 @@ public class PersonController {
     PersonDao personDao;
 
     @GET
+    @Path("all")
     public Response getAll() {
         List<Person> persons = personDao.getAll();
             if (persons == null) {
@@ -42,6 +45,19 @@ public class PersonController {
         Person person = personDao.findById(id);
         return Response.ok(person).build();
     }
+    
+    @GET
+    public Response getByFio(@QueryParam("first_name") String first_name, @QueryParam("second_name") String second_name, @QueryParam("third_name") String third_name) {
+        if (first_name == null) {
+          throw new WebApplicationException(
+            Response.status(Response.Status.BAD_REQUEST)
+              .entity("Не указано Имя first_name")
+              .build()
+          );
+        }
+        List<Person> persons_list = personDao.findByFio(first_name, third_name, third_name);
+        return Response.ok(persons_list).build();
+    }
 
     @PUT
     @Path("{id}")
@@ -53,11 +69,11 @@ public class PersonController {
     }
 
     @POST
-    public Response create(@Valid Person person) {
-        try {
-            personDao.create(person);
+    public Response create(Person person) {
+//        try {
+            System.err.println(person.getDateOfBirth());
             if (person.getDateOfBirth() == null) {
-                return Response.serverError().status(Response.Status.BAD_REQUEST).entity("не указана дата рождения в формате yyyy-mm-dd").build();
+                return Response.serverError().status(Response.Status.BAD_REQUEST).entity("не указана дата рождения getDateOfBirth в формате yyyy-mm-dd").build();
             }
             if (person.getFullname() == null) {
                 return Response.serverError().status(Response.Status.BAD_REQUEST).entity("не указано ФИО").build();
@@ -65,13 +81,16 @@ public class PersonController {
             if (person.getSex() == null) {
                 return Response.serverError().status(Response.Status.BAD_REQUEST).entity("не указан пол").build();
             }
-        }catch(Exception e) {
-            e.getMessage();
-            System.err.println(e.getMessage());
-            Response.serverError().status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+            personDao.create(person);
+//        } catch(Exception e) {
+//            e.getMessage();
+//            System.err.println(e.getMessage());
+//            Response.serverError().status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 //            throw e;
-        } finally {}
-        return Response.ok().build();
+//        } finally {
+            
+//        }
+        return Response.ok("ok").build();
     }
 
     @DELETE
