@@ -17,6 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import Tools.functions;
+import java.math.BigInteger;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 
@@ -29,6 +30,7 @@ public class PersonController {
     @Inject
     PersonDao personDao;
 
+    // Все записи
     @GET
     @Path("all")
     public Response getAll() {
@@ -38,14 +40,14 @@ public class PersonController {
             }        
         return Response.ok(persons).build();
     }
-
+    // Один клиент по ИД
     @GET
     @Path("{id}")
     public Response getTodo(@PathParam("id") Long id) {
         Person person = personDao.findById(id);
         return Response.ok(person).build();
     }
-    
+    // Поиск по ФИО
     @GET
     @Path("byfio")
     public Response getByFio(@QueryParam("first_name") String first_name, @QueryParam("second_name") String second_name, @QueryParam("third_name") String third_name) {
@@ -59,21 +61,35 @@ public class PersonController {
         List<Person> persons_list = personDao.findByFio(first_name, second_name, third_name);
         return Response.ok(persons_list).build();
     }
-    
+    // Поиск по адресу
     @GET
     @Path("byaddress")
     public Response getByAddress(@QueryParam("address") String address) {
         if (address == null) {
           throw new WebApplicationException(
             Response.status(Response.Status.BAD_REQUEST)
-              .entity("Не указан адресс address")
+              .entity("Не указан адрес (address)")
               .build()
           );
         }
         List<Person> person_list = personDao.findByAdres(address);
         return Response.ok(person_list).build();
     }
-
+    // поиск по инн
+    @GET
+    @Path("byinn")
+    public Response getByInn(@QueryParam("inn") BigInteger inn) {
+        if (inn == null) {
+          throw new WebApplicationException(
+            Response.status(Response.Status.BAD_REQUEST)
+              .entity("Не указан ИНН (inn)")
+              .build()
+          );
+        }
+        Person persons = personDao.findByInn(inn);
+        return Response.ok(persons).build();
+    }    
+    // Обновить
     @PUT
     @Path("{id}")
     public Response update(@PathParam("id") Long id, Person person) {
@@ -82,7 +98,7 @@ public class PersonController {
         personDao.update(updatePerson);
         return Response.ok().build();
     }
-
+    // Добавить
     @POST
     public Response create(Person person) {
 //        try {
@@ -107,7 +123,8 @@ public class PersonController {
 //        }
         return Response.ok("ok").build();
     }
-
+    
+    // Удалить
     @DELETE
     @Path("{id}")
     public Response delete(@PathParam("id") Long id) {

@@ -1,11 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Dao;
 
 import Entity.Person;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -33,6 +29,10 @@ public class PersonDao {
     public List<Person> findByAdres(String address) {
         return em.createNamedQuery("Person.findByAddres").setParameter("addres","%" + address + "%").getResultList();
     }
+    
+    public Person findByInn(BigInteger inn) {
+        return (Person) em.createNamedQuery("Person.findByInn").setParameter("inn", inn).getSingleResult();
+    }    
 
     public List<Person> findByFio(String firstName, String surname, String thirdname) {
 
