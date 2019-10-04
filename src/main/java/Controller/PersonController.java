@@ -47,6 +47,7 @@ public class PersonController {
     }
     
     @GET
+    @Path("byfio")
     public Response getByFio(@QueryParam("first_name") String first_name, @QueryParam("second_name") String second_name, @QueryParam("third_name") String third_name) {
         if (first_name == null) {
           throw new WebApplicationException(
@@ -55,8 +56,22 @@ public class PersonController {
               .build()
           );
         }
-        List<Person> persons_list = personDao.findByFio(first_name, third_name, third_name);
+        List<Person> persons_list = personDao.findByFio(first_name, second_name, third_name);
         return Response.ok(persons_list).build();
+    }
+    
+    @GET
+    @Path("byaddress")
+    public Response getByAddress(@QueryParam("address") String address) {
+        if (address == null) {
+          throw new WebApplicationException(
+            Response.status(Response.Status.BAD_REQUEST)
+              .entity("Не указан адресс address")
+              .build()
+          );
+        }
+        List<Person> person_list = personDao.findByAdres(address);
+        return Response.ok(person_list).build();
     }
 
     @PUT

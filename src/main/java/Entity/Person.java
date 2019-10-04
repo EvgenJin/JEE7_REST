@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
+//https://support.dbagenesis.com/knowledge-base/increase-memory-target-in-oracle/#query-to-find-sga-components-size
 /**
  *
  * @author eshahov
@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Person.findAll", query = "SELECT p FROM Person p")
     , @NamedQuery(name = "Person.findById", query = "SELECT p FROM Person p WHERE p.id = :id")
-    , @NamedQuery(name = "Person.findByAddres", query = "SELECT p FROM Person p WHERE p.addres = :addres")
+    , @NamedQuery(name = "Person.findByAddres", query = "SELECT p FROM Person p WHERE lower(p.addres) like lower(:addres)")
     , @NamedQuery(name = "Person.findByDateOfBirth", query = "SELECT p FROM Person p WHERE p.dateOfBirth = :dateOfBirth")
     , @NamedQuery(name = "Person.findByFullname", query = "SELECT p FROM Person p WHERE p.fullname = :fullname")
     , @NamedQuery(name = "Person.findByInn", query = "SELECT p FROM Person p WHERE p.inn = :inn")

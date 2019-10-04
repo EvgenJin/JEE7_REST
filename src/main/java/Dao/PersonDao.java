@@ -16,10 +16,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-/**
- *
- * @author admin
- */
 @Stateless
 public class PersonDao {
     
@@ -34,22 +30,10 @@ public class PersonDao {
         return em.find(Person.class, id);
     }
 
-    public void update(Person person) {
-        em.merge(person);
+    public List<Person> findByAdres(String address) {
+        return em.createNamedQuery("Person.findByAddres").setParameter("addres","%" + address + "%").getResultList();
     }
 
-    public void create(Person person) {
-        em.persist(person);
-    }
-
-    public void delete(Person person) {
-        if (!em.contains(person)) {
-            person = em.merge(person);
-        }
-
-        em.remove(person);
-    }
-    
     public List<Person> findByFio(String firstName, String surname, String thirdname) {
 
         CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -59,7 +43,7 @@ public class PersonDao {
 
         List<Predicate> predicateList = new ArrayList<>();
 
-        Predicate firstNamePredicate, surnamePredicate;
+        Predicate firstNamePredicate, surnamePredicate, thirdnamePredicate;
 
 //      имя не нулл и не пусто  
         if ((firstName != null) && (!(firstName.isEmpty()))) {
@@ -75,18 +59,30 @@ public class PersonDao {
         }
 
         if ((thirdname != null) && (!(thirdname.isEmpty()))) {
-            surnamePredicate = builder.like(
+            thirdnamePredicate = builder.like(
                 builder.upper(cust.<String>get("tname")), "%"+thirdname.toUpperCase()+"%");
-            predicateList.add(surnamePredicate);
+            predicateList.add(thirdnamePredicate);
         }            
 
         Predicate[] predicates = new Predicate[predicateList.size()];
         predicateList.toArray(predicates);
         query.where(predicates);
-//        System.err.println(query.toString());
         return em.createQuery(query).getResultList();
-//            System.out.println(query);
-//            return null;
-    }         
+    }
+    
+    public void update(Person person) {
+        em.merge(person);
+    }
+
+    public void create(Person person) {
+        em.persist(person);
+    }
+
+    public void delete(Person person) {
+        if (!em.contains(person)) {
+            person = em.merge(person);
+        }
+        em.remove(person);
+    }    
     
 }
