@@ -60,7 +60,6 @@ public class Person implements Serializable {
     @Column(name = "ADDRES")
     private String addres;
     @Column(name = "DATE_OF_BIRTH")
-//    @Temporal(TemporalType.TIMESTAMP)
     private Date dateOfBirth;
     @Size(max = 255)
     @Column(name = "FULLNAME")
@@ -84,20 +83,10 @@ public class Person implements Serializable {
     private String tname;
    
     // mappedBy указывает, что объект в этом сторонe является обратной зависимостью, а владелец находится в "другой" сущности.
-    @OneToMany(mappedBy = "person", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    @OneToMany(mappedBy = "person", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     //чтобы не было рекурсии по ордерам - персонам - ордерам
-    @JsonManagedReference
-    private List<Orders> orders;
-
-    public List<Orders> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Orders> orders) {
-        this.orders = orders;
-    }  
-
-
+//    @JsonManagedReference
+//    private List<Orders> orders;
 
     public Person() {
     }

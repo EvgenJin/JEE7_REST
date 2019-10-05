@@ -7,9 +7,8 @@ package Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.List;
+import java.sql.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,17 +16,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -39,59 +33,57 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Orders.findAll", query = "SELECT o FROM Orders o")
     , @NamedQuery(name = "Orders.findById", query = "SELECT o FROM Orders o WHERE o.id = :id")
+    , @NamedQuery(name = "Orders.findByPerson", query = "SELECT o FROM Orders o WHERE o.personid = :personid")    
     , @NamedQuery(name = "Orders.findByDescription", query = "SELECT o FROM Orders o WHERE o.description = :description")
-    , @NamedQuery(name = "Orders.findByOrderid", query = "SELECT o FROM Orders o WHERE o.orderid = :orderid")
-    , @NamedQuery(name = "Orders.findByPrice", query = "SELECT o FROM Orders o WHERE o.price = :price")
     , @NamedQuery(name = "Orders.findByTitle", query = "SELECT o FROM Orders o WHERE o.title = :title")})
+
+
 public class Orders implements Serializable {
 
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
-    @NotNull
+//    @NotNull
     @Column(name = "ID")
     private Long id;
     @Size(max = 255)
     @Column(name = "DESCRIPTION")
     private String description;
-    @Column(name = "ORDERID")
-    private BigInteger orderid;
-    @Column(name = "PRICE")
-    private BigInteger price;
+    @Column(name = "AMOUNT")
+    private BigInteger amount;
     @Size(max = 255)
     @Column(name = "TITLE")
     private String title;
-//    @JoinTable(name = "PERSON_ORDERS", joinColumns = {
-//        @JoinColumn(name = "ORDERS_ID", referencedColumnName = "ID")}, inverseJoinColumns = {
-//        @JoinColumn(name = "PERSON_ID", referencedColumnName = "ID")})
-//    @ManyToMany
-//    private List<Person> personList;
-//    @JoinColumn(name = "PERSON_ID", referencedColumnName = "ID")
-//    @ManyToOne
-//    private Person personId;
-//    @ManyToOne(fetch=FetchType.LAZY)
-//    @JoinColumn(name="ID")
-//    private Person person;    
+    @Column(name = "DATE_IN")
+    private Date datein;
+    @Column(name = "DATE_OUT")
+    private Date dateout;
+    @Size(max = 255)
+    @Column(name = "COMMENTS")
+    private String comment;     
     // CascadeType.ALL все операции изменения в коллекции (добавление/изменение) отражает в базе данных   
     // FetchType.EAGER – Предусматривает получение полной связи между сущностями, и последующих обращениях к связям не будет выполнять запрос на получение данных, тк данные изначально получены полностью.
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     //  @JoinColumn указывает, что этот объект является владельцем отношения (то есть: соответствующая таблица имеет столбец с внешним ключом в ссылочной таблице)
-    @JoinColumn(name = "PERSON_ID", nullable = false)
+//    @JoinColumn(name = "PERSON_ID", nullable = false)
     //чтобы не было рекурсии по персонам - ордерам -  персонам
-    @JsonBackReference
-    private Person person;
-
-    public Person getPerson() {
-        return person;
-    }
-
-    public void setPerson(Person person) {
-        this.person = person;
-    }
-
+//    @JsonBackReference
+    @Column(name = "PERSON_ID")
+    private Long personid;
 
     public Orders() {
+    }
+    
+    public Orders(Orders order) {
+        this.amount = order.getAmount();
+        this.comment = order.getComment();
+        this.datein = order.getDatein();
+        this.dateout = order.getDateout();
+        this.description = order.getDescription();
+        this.id = order.getId();
+        this.personid = order.getPersonid();
+        this.title = order.getTitle();
     }
 
     public Orders(Long id) {
@@ -114,22 +106,6 @@ public class Orders implements Serializable {
         this.description = description;
     }
 
-    public BigInteger getOrderid() {
-        return orderid;
-    }
-
-    public void setOrderid(BigInteger orderid) {
-        this.orderid = orderid;
-    }
-
-    public BigInteger getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigInteger price) {
-        this.price = price;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -138,29 +114,45 @@ public class Orders implements Serializable {
         this.title = title;
     }
     
-//    public Person getPerson() {
-//        return person;
-//    }
-//
-//    public void setPerson(Person person) {
-//        this.person = person;
-//    }
-//    @XmlTransient
-//    public List<Person> getPersonList() {
-//        return personList;
-//    }
-//
-//    public void setPersonList(List<Person> personList) {
-//        this.personList = personList;
-//    }
-//
-//    public Person getPersonId() {
-//        return personId;
-//    }
-//
-//    public void setPersonId(Person personId) {
-//        this.personId = personId;
-//    }
+    public BigInteger getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigInteger amount) {
+        this.amount = amount;
+    }
+
+    public Date getDatein() {
+        return datein;
+    }
+
+    public void setDatein(Date datein) {
+        this.datein = datein;
+    }
+
+    public Date getDateout() {
+        return dateout;
+    }
+
+    public void setDateout(Date dateout) {
+        this.dateout = dateout;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+    
+    public Long getPersonid() {
+        return personid;
+    }
+
+    public void setPersonid(Long personid) {
+        this.personid = personid;
+    }    
 
     @Override
     public int hashCode() {

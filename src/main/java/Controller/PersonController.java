@@ -1,5 +1,6 @@
 package Controller;
 
+import Dao.OrdersDao;
 import Dao.PersonDao;
 import Entity.Person;
 import java.util.List;
@@ -18,80 +19,57 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import Tools.functions;
 import java.math.BigInteger;
+import java.sql.Date;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 
 @RequestScoped
-@Path("person")
+@Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PersonController {
 
     @Inject
     PersonDao personDao;
+    
+    @Inject
+    OrdersDao ordersDao;    
 
     // Все записи
     @GET
-    @Path("all")
+    @Path("person/all")
     public Response getAll() {
         List<Person> persons = personDao.getAll();
             if (persons == null) {
-                    throw new RuntimeException("Can't load all messages");
+                    throw new RuntimeException("Ошибка:ничего не найдено");
             }        
         return Response.ok(persons).build();
     }
     // Один клиент по ИД
     @GET
-    @Path("{id}")
+    @Path("person/{id}")
     public Response getTodo(@PathParam("id") Long id) {
-        Person person = personDao.findById(id);
-        return Response.ok(person).build();
+        return id != 0 ? Response.ok(personDao.findById(id)).build() : Response.ok(personDao.getAll()).build();
     }
-    // Поиск по ФИО
-    @GET
-    @Path("byfio")
-    public Response getByFio(@QueryParam("first_name") String first_name, @QueryParam("second_name") String second_name, @QueryParam("third_name") String third_name) {
-        if (first_name == null) {
-          throw new WebApplicationException(
-            Response.status(Response.Status.BAD_REQUEST)
-              .entity("Не указано Имя first_name")
-              .build()
-          );
-        }
-        List<Person> persons_list = personDao.findByFio(first_name, second_name, third_name);
-        return Response.ok(persons_list).build();
+    // Поиск по реквизитам имя фамилия отчество инн дата рождения адрес 
+    @POST
+    @Path("person/search")
+    public Response getByReqs (Person person){
+        return person.getFname() != null ? 
+                  Response.ok(personDao.findByFio(
+                    person.getFname(),
+                    person.getSname(),
+                    person.getTname(),
+                    person.getInn(),
+                    person.getAddres(),
+                    person.getDateOfBirth())
+                  ).build() 
+                : Response.status(Response.Status.BAD_REQUEST) .entity("Не указано Имя fname").build();
     }
-    // Поиск по адресу
-    @GET
-    @Path("byaddress")
-    public Response getByAddress(@QueryParam("address") String address) {
-        if (address == null) {
-          throw new WebApplicationException(
-            Response.status(Response.Status.BAD_REQUEST)
-              .entity("Не указан адрес (address)")
-              .build()
-          );
-        }
-        List<Person> person_list = personDao.findByAdres(address);
-        return Response.ok(person_list).build();
-    }
-    // поиск по инн
-    @GET
-    @Path("byinn")
-    public Response getByInn(@QueryParam("inn") BigInteger inn) {
-        if (inn == null) {
-          throw new WebApplicationException(
-            Response.status(Response.Status.BAD_REQUEST)
-              .entity("Не указан ИНН (inn)")
-              .build()
-          );
-        }
-        Person persons = personDao.findByInn(inn);
-        return Response.ok(persons).build();
-    }    
+  
     // Обновить
     @PUT
-    @Path("{id}")
+    @Path("person/{id}")
     public Response update(@PathParam("id") Long id, Person person) {
         Person updatePerson = personDao.findById(id);
         updatePerson.setPerson(person);
@@ -100,6 +78,7 @@ public class PersonController {
     }
     // Добавить
     @POST
+    @Path("person")
     public Response create(Person person) {
 //        try {
             System.err.println(person.getDateOfBirth());
@@ -126,12 +105,48 @@ public class PersonController {
     
     // Удалить
     @DELETE
-    @Path("{id}")
+    @Path("person/{id}")
     public Response delete(@PathParam("id") Long id) {
         Person getPerson = personDao.findById(id);
         personDao.delete(getPerson);
         return Response.ok().build();
     }
+    
+    
+    // Один заказ по ИД
+    @GET
+    @Path("orders/by_id")
+    public Response findById(@QueryParam("id") Long id) {
+        System.err.println(id);
+        return id != null ?
+                  Response.ok(ordersDao.findById((id))).build() 
+                : Response.status(Response.Status.BAD_REQUEST) .entity("Не указан id заказа (id)").build();
+    }
+    
+    @GET
+    @Path("orders/by_person")
+    public Response findByPersonId(@QueryParam("person_id") Long id) {
+        return id != null ? 
+                  Response.ok(ordersDao.findByPersonID(id)).build() 
+                : Response.status(Response.Status.BAD_REQUEST) .entity("Не указан id заказа (id)").build();
+    }
+    
+    
+//    -------------------------------------------  рудименты ------------------------------------------- 
+    // поиск по инн
+    @GET
+    @Path("person/byinn")
+    public Response getByInn(@QueryParam("inn") BigInteger inn) {
+        if (inn == null) {
+          throw new WebApplicationException(
+            Response.status(Response.Status.BAD_REQUEST)
+              .entity("Не указан ИНН (inn)")
+              .build()
+          );
+        }
+        Person persons = personDao.findByInn(inn);
+        return Response.ok(persons).build();
+    }    
 
 }
 

@@ -2,6 +2,7 @@ package Dao;
 
 import Entity.Person;
 import java.math.BigInteger;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -34,7 +35,7 @@ public class PersonDao {
         return (Person) em.createNamedQuery("Person.findByInn").setParameter("inn", inn).getSingleResult();
     }    
 
-    public List<Person> findByFio(String firstName, String surname, String thirdname) {
+    public List<Person> findByFio(String firstName, String surname, String thirdname, BigInteger inn, String addres, Date dateofbirth) {
 
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Person> query = builder.createQuery(Person.class);
@@ -43,7 +44,7 @@ public class PersonDao {
 
         List<Predicate> predicateList = new ArrayList<>();
 
-        Predicate firstNamePredicate, surnamePredicate, thirdnamePredicate;
+        Predicate firstNamePredicate, surnamePredicate, thirdnamePredicate, innPredicate, addresPredicate, dateofbirthPredicate;
 
 //      имя не нулл и не пусто  
         if ((firstName != null) && (!(firstName.isEmpty()))) {
@@ -62,7 +63,25 @@ public class PersonDao {
             thirdnamePredicate = builder.like(
                 builder.upper(cust.<String>get("tname")), "%"+thirdname.toUpperCase()+"%");
             predicateList.add(thirdnamePredicate);
-        }            
+        }
+        
+        if (inn != null) {
+            innPredicate = builder.equal(cust.get("inn"), inn);
+            predicateList.add(innPredicate);
+        }
+        
+        if ((addres != null) && (!(addres.isEmpty()))) {
+            addresPredicate = builder.like(
+                builder.upper(cust.<String>get("addres")), "%"+addres.toUpperCase()+"%");
+            predicateList.add(addresPredicate);
+        }   
+        
+        if (dateofbirth != null) {
+            dateofbirthPredicate = builder.equal(cust.get("dateOfBirth"), dateofbirth);
+            predicateList.add(dateofbirthPredicate);
+        }        
+        
+       
 
         Predicate[] predicates = new Predicate[predicateList.size()];
         predicateList.toArray(predicates);
