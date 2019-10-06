@@ -5,21 +5,17 @@
  */
 package Entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.sql.Date;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -69,6 +65,7 @@ public class Orders implements Serializable {
 //    @JoinColumn(name = "PERSON_ID", nullable = false)
     //чтобы не было рекурсии по персонам - ордерам -  персонам
 //    @JsonBackReference
+    @NotNull
     @Column(name = "PERSON_ID")
     private Long personid;
 

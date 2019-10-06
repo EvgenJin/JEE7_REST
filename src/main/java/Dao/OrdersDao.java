@@ -6,7 +6,6 @@
 package Dao;
 
 import Entity.Orders;
-import Entity.Person;
 import java.math.BigInteger;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -19,10 +18,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-/**
- *
- * @author eshahov
- */
 @Stateless
 public class OrdersDao {
     
@@ -41,7 +36,7 @@ public class OrdersDao {
         return em.find(Orders.class, id);
     }
     
-    public List<Orders> findByRecs(String description, BigInteger amount, String title, Date datein, Date dateout, String comment) {
+    public List<Orders> findByRecs(String description, BigInteger amount, String title, Date datein, Date dateout, String comment, Long personid) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Orders> query = builder.createQuery(Orders.class);
         Root<Orders> order = query.from(Orders.class);
@@ -49,7 +44,7 @@ public class OrdersDao {
 
         List<Predicate> predicateList = new ArrayList<>();
 
-        Predicate descriptionPredicate, amountPredicate, titlePredicate, dateinPredicate, dateoutPredicate, commentPredicate;
+        Predicate descriptionPredicate, amountPredicate, titlePredicate, dateinPredicate, dateoutPredicate, commentPredicate, personidPredicate;
         
         if ((description != null) && (!(description.isEmpty()))) {
             descriptionPredicate = builder.like(
@@ -79,6 +74,10 @@ public class OrdersDao {
         if (dateout != null && datein == null) {
             dateoutPredicate = builder.equal(order.get("dateout"), dateout);
             predicateList.add(dateoutPredicate);
+        }
+        if (personid != null) {
+            personidPredicate = builder.equal(order.get("personid"), personid);
+            predicateList.add(personidPredicate);
         }        
         
         Predicate[] predicates = new Predicate[predicateList.size()];

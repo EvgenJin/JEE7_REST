@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 import Tools.functions;
 import java.math.BigInteger;
 import java.sql.Date;
+import java.util.Calendar;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 
@@ -69,7 +70,6 @@ public class PersonController {
                   ).build() 
                 : Response.status(Response.Status.BAD_REQUEST) .entity("Не указано Имя fname").build();
     }
-  
     // Обновить
     @PUT
     @Path("person/{id}")
@@ -125,11 +125,10 @@ public class PersonController {
             }        
         return Response.ok(orders).build();
     }    
-
     // Один заказ по ИД
     @GET
     @Path("orders/{id}")
-    public Response getOrderById(@QueryParam("id") Long id) {
+    public Response getOrderById(@PathParam("id") Long id) {
         return id != null ?
                   Response.ok(ordersDao.findById((id))).build()
                 : Response.status(Response.Status.BAD_REQUEST) .entity("Не указан id заказа (id)").build();
@@ -137,17 +136,17 @@ public class PersonController {
     // поиск по реквизитам
     @POST
     @Path("orders/search")
-    public Response findByPersonId(Orders order) {
+    public Response findByRecs(Orders order) {
         return Response.ok(ordersDao.findByRecs(
             order.getDescription(),
             order.getAmount(),
             order.getTitle(),
             order.getDatein(),
             order.getDateout(),
-            order.getComment())
+            order.getComment(),
+            order.getPersonid())
         ).build();
-    }
-    
+    }   
     // Обновить
     @PUT
     @Path("orders/{id}")
@@ -161,6 +160,8 @@ public class PersonController {
     @POST
     @Path("orders")
     public Response createOrder(Orders order) {
+        Date today = new Date(Calendar.getInstance().getTime().getTime());
+        order.setDatein(today);
         ordersDao.create(order);
         return Response.ok("ok").build();
     }
