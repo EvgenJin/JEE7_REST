@@ -2,6 +2,7 @@ package Controller;
 
 import Dao.OrdersDao;
 import Dao.PersonDao;
+import Entity.Orders;
 import Entity.Person;
 import java.util.List;
 import javax.enterprise.context.RequestScoped;
@@ -35,28 +36,30 @@ public class PersonController {
     @Inject
     OrdersDao ordersDao;    
 
+    
+    // ------------------------------------- person -------------------------------------  
     // Все записи
     @GET
     @Path("person/all")
-    public Response getAll() {
+    public Response getPersonAll() {
         List<Person> persons = personDao.getAll();
             if (persons == null) {
-                    throw new RuntimeException("Ошибка:ничего не найдено");
+                    throw new RuntimeException("Ошибка(persons):ничего не найдено");
             }        
         return Response.ok(persons).build();
     }
     // Один клиент по ИД
     @GET
     @Path("person/{id}")
-    public Response getTodo(@PathParam("id") Long id) {
+    public Response getPersonById(@PathParam("id") Long id) {
         return id != 0 ? Response.ok(personDao.findById(id)).build() : Response.ok(personDao.getAll()).build();
     }
     // Поиск по реквизитам имя фамилия отчество инн дата рождения адрес 
     @POST
     @Path("person/search")
-    public Response getByReqs (Person person){
+    public Response getPersonByReqs (Person person){
         return person.getFname() != null ? 
-                  Response.ok(personDao.findByFio(
+                  Response.ok(personDao.findByRecs(
                     person.getFname(),
                     person.getSname(),
                     person.getTname(),
@@ -70,7 +73,7 @@ public class PersonController {
     // Обновить
     @PUT
     @Path("person/{id}")
-    public Response update(@PathParam("id") Long id, Person person) {
+    public Response updatePerson(@PathParam("id") Long id, Person person) {
         Person updatePerson = personDao.findById(id);
         updatePerson.setPerson(person);
         personDao.update(updatePerson);
@@ -102,7 +105,6 @@ public class PersonController {
 //        }
         return Response.ok("ok").build();
     }
-    
     // Удалить
     @DELETE
     @Path("person/{id}")
@@ -112,25 +114,64 @@ public class PersonController {
         return Response.ok().build();
     }
     
-    
+    // ------------------------------------- orders ------------------------------------- 
+    // Все записи
+    @GET
+    @Path("orders/all")
+    public Response getOrdersAll() {
+        List<Orders> orders = ordersDao.getAll();
+            if (orders == null) {
+                    throw new RuntimeException("Ошибка(orders):ничего не найдено");
+            }        
+        return Response.ok(orders).build();
+    }    
+
     // Один заказ по ИД
     @GET
-    @Path("orders/by_id")
-    public Response findById(@QueryParam("id") Long id) {
-        System.err.println(id);
+    @Path("orders/{id}")
+    public Response getOrderById(@QueryParam("id") Long id) {
         return id != null ?
-                  Response.ok(ordersDao.findById((id))).build() 
+                  Response.ok(ordersDao.findById((id))).build()
                 : Response.status(Response.Status.BAD_REQUEST) .entity("Не указан id заказа (id)").build();
     }
-    
-    @GET
-    @Path("orders/by_person")
-    public Response findByPersonId(@QueryParam("person_id") Long id) {
-        return id != null ? 
-                  Response.ok(ordersDao.findByPersonID(id)).build() 
-                : Response.status(Response.Status.BAD_REQUEST) .entity("Не указан id заказа (id)").build();
+    // поиск по реквизитам
+    @POST
+    @Path("orders/search")
+    public Response findByPersonId(Orders order) {
+        return Response.ok(ordersDao.findByRecs(
+            order.getDescription(),
+            order.getAmount(),
+            order.getTitle(),
+            order.getDatein(),
+            order.getDateout(),
+            order.getComment())
+        ).build();
     }
     
+    // Обновить
+    @PUT
+    @Path("orders/{id}")
+    public Response updateOrder(@PathParam("id") Long id, Orders order) {
+        Orders updateOrder = ordersDao.findById(id);
+        updateOrder.setOrders(order);
+        ordersDao.update(updateOrder);
+        return Response.ok().build();
+    }
+    // Добавить
+    @POST
+    @Path("orders")
+    public Response createOrder(Orders order) {
+        ordersDao.create(order);
+        return Response.ok("ok").build();
+    }
+    // Удалить
+    @DELETE
+    @Path("orders/{id}")
+    public Response deleteOrder(@PathParam("id") Long id) {
+        Orders getOrder = ordersDao.findById(id);
+        ordersDao.delete(getOrder);
+        return Response.ok().build();
+    }    
     
 //    -------------------------------------------  рудименты ------------------------------------------- 
     // поиск по инн

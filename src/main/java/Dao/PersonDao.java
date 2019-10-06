@@ -35,7 +35,7 @@ public class PersonDao {
         return (Person) em.createNamedQuery("Person.findByInn").setParameter("inn", inn).getSingleResult();
     }    
 
-    public List<Person> findByFio(String firstName, String surname, String thirdname, BigInteger inn, String addres, Date dateofbirth) {
+    public List<Person> findByRecs(String firstName, String surname, String thirdname, BigInteger inn, String addres, Date dateofbirth) {
 
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Person> query = builder.createQuery(Person.class);

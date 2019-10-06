@@ -81,12 +81,23 @@ public class Person implements Serializable {
     @Size(max = 255)
     @Column(name = "T_NAME")
     private String tname;
-   
-    // mappedBy указывает, что объект в этом сторонe является обратной зависимостью, а владелец находится в "другой" сущности.
-//    @OneToMany(mappedBy = "person", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+
+/* массив с заказами у персона - тормохит запрос    
+    //mappedBy указывает, что объект в этом сторонe является обратной зависимостью, а владелец находится в "другой" сущности.
+    @OneToMany(mappedBy = "person", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     //чтобы не было рекурсии по ордерам - персонам - ордерам
-//    @JsonManagedReference
-//    private List<Orders> orders;
+    @JsonManagedReference
+    private List<Orders> orders;
+
+    public List<Orders> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Orders> orders) {
+        this.orders = orders;
+    }  
+*/
+
 
     public Person() {
     }

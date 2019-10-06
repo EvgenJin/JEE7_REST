@@ -75,7 +75,7 @@ public class Orders implements Serializable {
     public Orders() {
     }
     
-    public Orders(Orders order) {
+    public void setOrders(Orders order) {
         this.amount = order.getAmount();
         this.comment = order.getComment();
         this.datein = order.getDatein();
