@@ -24,8 +24,34 @@ import Tools.functions;
 import java.math.BigInteger;
 import java.sql.Date;
 import java.util.Calendar;
+import java.util.Hashtable;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.SQLException;
+import java.util.EnumMap;
+import java.util.Map;
+import javax.imageio.ImageIO;
+import javax.sql.rowset.serial.SerialBlob;
+import net.glxn.qrgen.core.image.ImageType;
+import net.glxn.qrgen.javase.QRCode;
+
 
 @RequestScoped
 @Path("/")
@@ -133,7 +159,7 @@ public class PersonController {
     // Один заказ по ИД
     @GET
     @Path("orders/{id}")
-    public Response getOrderById(@PathParam("id") Long id) {
+    public Response getOrderById(@PathParam("id") Long id) throws WriterException {
         return id != null ?
                   Response.ok(ordersDao.findById((id))).build()
                 : Response.status(Response.Status.BAD_REQUEST) .entity("Не указан id заказа (id)").build();
@@ -164,9 +190,17 @@ public class PersonController {
     // Добавить
     @POST
     @Path("orders")
-    public Response createOrder(Orders order) {
+    public Response createOrder(Orders order) throws SQLException {
         Date today = new Date(Calendar.getInstance().getTime().getTime());
         order.setDatein(today);
+        
+        ByteArrayOutputStream bout =
+            QRCode.from("https://memorynotfound.com")
+                    .withSize(250, 250)
+                    .to(ImageType.JPG)
+                    .stream();
+            byte[] bytes = bout.toByteArray();
+        order.setQrcode(bytes);        
         ordersDao.create(order);
         return Response.ok("ok").build();
     }

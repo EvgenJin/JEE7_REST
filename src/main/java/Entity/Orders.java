@@ -7,6 +7,7 @@ package Entity;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.sql.Blob;
 import java.sql.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -68,6 +69,19 @@ public class Orders implements Serializable {
     @NotNull
     @Column(name = "PERSON_ID")
     private Long personid;
+    
+    @Column(name = "QR_CODE")
+    private byte[] qrcode;   
+
+    public byte[] getQrcode() {
+        return qrcode;
+    }
+
+    public void setQrcode(byte[] qrcode) {
+        this.qrcode = qrcode;
+    }
+
+
 
     public Orders() {
     }
