@@ -1,8 +1,10 @@
 package Controller;
 
+import Dao.OrdersContentDao;
 import Dao.OrdersDao;
 import Dao.PersonDao;
 import Entity.Orders;
+import Entity.OrdersContent;
 import Entity.Person;
 import java.util.List;
 import javax.enterprise.context.RequestScoped;
@@ -35,7 +37,10 @@ public class PersonController {
     PersonDao personDao;
     
     @Inject
-    OrdersDao ordersDao;    
+    OrdersDao ordersDao;  
+    
+    @Inject
+    OrdersContentDao ordersContentDao;
 
     
     // ------------------------------------- person -------------------------------------  
@@ -174,6 +179,17 @@ public class PersonController {
         return Response.ok().build();
     }    
     
+    // ------------------------------------- orders content -------------------------------------
+    
+    @GET
+    @Path("orders_content/all")
+    public Response getOrdersContentAll() {
+        List<OrdersContent> orders = ordersContentDao.getAll();
+            if (orders == null) {
+                    throw new RuntimeException("Ошибка(orders):ничего не найдено");
+            }        
+        return Response.ok(orders).build();
+    }    
 //    -------------------------------------------  рудименты ------------------------------------------- 
     // поиск по инн
     @GET
