@@ -33,9 +33,6 @@ import java.sql.SQLException;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
 
-
-
-
 @RequestScoped
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -51,6 +48,7 @@ public class PersonController {
     @Inject
     OrdersContentDao ordersContentDao;
 
+    
     // ------------------------------------- person -------------------------------------  
     // Все записи
     @GET
