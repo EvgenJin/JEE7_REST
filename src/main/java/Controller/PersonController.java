@@ -58,7 +58,10 @@ public class PersonController {
             if (persons == null) {
                     throw new RuntimeException("Ошибка(persons):ничего не найдено");
             }        
-        return Response.ok(persons).build();
+        return Response.ok(persons)
+                        .header("Access-Control-Allow-Origin", "*")
+			.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
+                .build();
     }
     // Один клиент по ИД
     @GET
