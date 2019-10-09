@@ -67,7 +67,11 @@ public class PersonController {
     @GET
     @Path("person/{id}")
     public Response getPersonById(@PathParam("id") Long id) {
-        return id != 0 ? Response.ok(personDao.findById(id)).build() : Response.ok(personDao.getAll()).build();
+        return id != 0 ? Response.ok(personDao.findById(id))
+                            .header("Access-Control-Allow-Origin", "*")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
+                         .build() 
+                : Response.ok(personDao.getAll()).build();
     }
     // Поиск по реквизитам имя фамилия отчество инн дата рождения адрес 
     @POST
@@ -165,7 +169,10 @@ public class PersonController {
             .stream();
         byte[] bytes = bout.toByteArray();
         order.setQrcode(bytes);
-        return Response.ok(order).build();
+        return Response.ok(order)
+                            .header("Access-Control-Allow-Origin", "*")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")                
+                .build();
 //        return id != null ?
 //                  Response.ok(ordersDao.findById((id))).build()
 //                : Response.status(Response.Status.BAD_REQUEST) .entity("Не указан id заказа (id)").build();
