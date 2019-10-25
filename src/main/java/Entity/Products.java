@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -79,6 +80,8 @@ public class Products implements Serializable {
     @Size(max = 4000)
     @Column(name = "IMG")
     private String img;
+    @Transient
+    private byte[] qrcode;    
 
     public Products() {
     }
@@ -182,6 +185,14 @@ public class Products implements Serializable {
     public void setImg(String img) {
         this.img = img;
     }
+    
+    public byte[] getQrcode() {
+        return qrcode;
+    }
+
+    public void setQrcode(byte[] qrcode) {
+        this.qrcode = qrcode;
+    }    
 
     @Override
     public int hashCode() {

@@ -68,21 +68,7 @@ public class PersonController {
         Person person = personDao.findById(id);
         // все заказы 
         List<Orders> orders_list = ordersDao.findByPersonID(id);
-        person.setOrders_list(orders_list);
-        // передача QR кода        
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode childNode1 = mapper.createObjectNode();
-        ((ObjectNode) childNode1).put("path", "person");
-        ((ObjectNode) childNode1).put("method", "GET");
-        ((ObjectNode) childNode1).put("id", person.getId());
-        String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(childNode1);
-        ByteArrayOutputStream bout = QRCode.from(jsonString)
-            .withSize(350, 350)
-            .to(ImageType.JPG)
-            .stream();
-        byte[] bytes = bout.toByteArray();
-        person.setQrcode(bytes);
-        
+        person.setOrders_list(orders_list);       
         return Response.ok(person)
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
