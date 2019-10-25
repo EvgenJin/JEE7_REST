@@ -74,7 +74,7 @@ public class ProductController {
         return Response.ok(product)
                             .header("Access-Control-Allow-Origin", "*")
                             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                        .build();
+                .build();
     }
 }
 
