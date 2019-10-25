@@ -1,10 +1,13 @@
+/Volumes/HDD/projects/JAVA/JEE7_REST/src/main/java/Dao/ProductsDao.java
+/Volumes/HDD/projects/JAVA/JEE7_REST/src/main/java/Dao/PersonDao.java
+/Volumes/HDD/projects/JAVA/JEE7_REST/src/main/java/Controller/PersonController.java
+/Volumes/HDD/projects/JAVA/JEE7_REST/src/main/java/Entity/Person.java
+/Volumes/HDD/projects/JAVA/JEE7_REST/src/main/java/Entity/Products.java
 /Volumes/HDD/projects/JAVA/JEE7_REST/src/main/java/Dao/OrdersDao.java
 /Volumes/HDD/projects/JAVA/JEE7_REST/src/main/java/Tools/functions.java
 /Volumes/HDD/projects/JAVA/JEE7_REST/src/main/java/Entity/Todos.java
 /Volumes/HDD/projects/JAVA/JEE7_REST/src/main/java/Entity/OrdersContent.java
-/Volumes/HDD/projects/JAVA/JEE7_REST/src/main/java/Dao/PersonDao.java
-/Volumes/HDD/projects/JAVA/JEE7_REST/src/main/java/Controller/PersonController.java
 /Volumes/HDD/projects/JAVA/JEE7_REST/src/main/java/Dao/OrdersContentDao.java
-/Volumes/HDD/projects/JAVA/JEE7_REST/src/main/java/Entity/Person.java
 /Volumes/HDD/projects/JAVA/JEE7_REST/src/main/java/Controller/ApplicationConfig.java
 /Volumes/HDD/projects/JAVA/JEE7_REST/src/main/java/Entity/Orders.java
+/Volumes/HDD/projects/JAVA/JEE7_REST/src/main/java/Controller/ProductController.java

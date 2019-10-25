@@ -7,8 +7,8 @@ package Entity;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.sql.Blob;
 import java.sql.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -71,18 +72,8 @@ public class Orders implements Serializable {
     @Column(name = "PERSON_ID")
     private Long personid;
     
-    @Column(name = "QR_CODE")
-    private byte[] qrcode;   
-
-    public byte[] getQrcode() {
-        return qrcode;
-    }
-
-    public void setQrcode(byte[] qrcode) {
-        this.qrcode = qrcode;
-    }
-
-
+    @Transient
+    private List<OrdersContent> orders_content;    
 
     public Orders() {
     }
@@ -165,6 +156,14 @@ public class Orders implements Serializable {
     public void setPersonid(Long personid) {
         this.personid = personid;
     }    
+    
+    public List<OrdersContent> getOrders_content() {
+        return orders_content;
+    }
+
+    public void setOrders_content(List<OrdersContent> orders_content) {
+        this.orders_content = orders_content;
+    }    
 
     @Override
     public int hashCode() {
@@ -175,7 +174,6 @@ public class Orders implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Orders)) {
             return false;
         }

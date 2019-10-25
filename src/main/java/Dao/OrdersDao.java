@@ -28,7 +28,7 @@ public class OrdersDao {
         return em.createNamedQuery("Orders.findAll", Orders.class).getResultList();
     }
     
-    public List findByPersonID(Long id) {
+    public List<Orders> findByPersonID(Long id) {
         return em.createNamedQuery("Orders.findByPerson").setParameter("personid", id).getResultList();
     }
 

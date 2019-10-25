@@ -1,10 +1,11 @@
 package Controller;
 
-import Dao.OrdersContentDao;
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
+
 import Dao.OrdersDao;
 import Dao.PersonDao;
 import Entity.Orders;
-import Entity.OrdersContent;
 import Entity.Person;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,28 +14,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.math.BigInteger;
-import java.sql.Date;
-import java.util.Calendar;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import java.io.ByteArrayOutputStream;
-import java.sql.SQLException;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
 
 @RequestScoped
-@Path("/")
+@Path("/person")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PersonController {
@@ -45,14 +30,20 @@ public class PersonController {
     @Inject
     OrdersDao ordersDao;  
     
-    @Inject
-    OrdersContentDao ordersContentDao;
+    @OPTIONS
+    @Path("{param}")
+    public Response options() {
+        return Response.ok("")
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
+                .header("Access-Control-Allow-Credentials", "true")
+                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+                .build();
+    }    
 
-    
-    // ------------------------------------- person -------------------------------------  
     // Все записи
     @GET
-    @Path("person/all")
+    @Path("all")
     public Response getPersonAll() {
         List<Person> persons = personDao.getAll();
             if (persons == null) {
@@ -65,33 +56,72 @@ public class PersonController {
     }
     // Один клиент по ИД
     @GET
-    @Path("person/{id}")
-    public Response getPersonById(@PathParam("id") Long id) {
-        return id != 0 ? Response.ok(personDao.findById(id))
-                            .header("Access-Control-Allow-Origin", "*")
-                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                         .build() 
-                : Response.ok(personDao.getAll()).build();
+    @Path("{id}")
+    public Response getPersonById(@PathParam("id") Long id) throws JsonProcessingException {
+        if (id == null) {
+          throw new WebApplicationException(
+            Response.status(Response.Status.BAD_REQUEST)
+              .entity("Не указан id")
+              .build()
+          );
+        }
+        Person person = personDao.findById(id);
+        // все заказы 
+        List<Orders> orders_list = ordersDao.findByPersonID(id);
+        person.setOrders_list(orders_list);
+        // передача QR кода        
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode childNode1 = mapper.createObjectNode();
+        ((ObjectNode) childNode1).put("path", "person");
+        ((ObjectNode) childNode1).put("method", "GET");
+        ((ObjectNode) childNode1).put("id", person.getId());
+        String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(childNode1);
+        ByteArrayOutputStream bout = QRCode.from(jsonString)
+            .withSize(350, 350)
+            .to(ImageType.JPG)
+            .stream();
+        byte[] bytes = bout.toByteArray();
+        person.setQrcode(bytes);
+        
+        return Response.ok(person)
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
+                .build();
     }
     // Поиск по реквизитам имя фамилия отчество инн дата рождения адрес 
     @POST
-    @Path("person/search")
+    @Path("search")
     public Response getPersonByReqs (Person person){
-        return person.getFname() != null ? 
-                  Response.ok(personDao.findByRecs(
-                    person.getFname(),
-                    person.getSname(),
-                    person.getTname(),
-                    person.getInn(),
-                    person.getAddres(),
-                    person.getDateOfBirth())
-                  ).build() 
-                : Response.status(Response.Status.BAD_REQUEST) .entity("Не указано Имя fname").build();
+        if (person.getFname() == null || "".equals(person.getFname())) {
+           throw new WebApplicationException( 
+           Response.status(Response.Status.BAD_REQUEST).entity("Не указано Имя fname")
+                    .header("Access-Control-Allow-Origin", "*")
+                    .header("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, OPTIONS")
+                    .header("Access-Control-Allow-Headers", "Content-Type")
+                    .allow("OPTIONS")
+                    .build()
+           );
+        }
+        return Response.ok(personDao.findByRecs(
+                person.getFname(),
+                person.getSname(),
+                person.getTname(),
+                person.getInn(),
+                person.getAddres(),
+                person.getDateOfBirth())
+        )
+        .header("Access-Control-Allow-Origin", "*")
+        .header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
+        .header("Access-Control-Allow-Credentials", "true")
+        .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+        .allow("OPTIONS")
+        .build();
+
     }
     // Обновить
     @PUT
-    @Path("person/{id}")
-    public Response updatePerson(@PathParam("id") Long id, Person person) {
+    @Path("{id}")
+    public Response updatePerson(@PathParam("id") Long id, Person person) {       
         Person updatePerson = personDao.findById(id);
         updatePerson.setPerson(person);
         personDao.update(updatePerson);
@@ -99,7 +129,7 @@ public class PersonController {
     }
     // Добавить
     @POST
-    @Path("person")
+    @Path("add")
     public Response create(Person person) {
 //        try {
             System.err.println(person.getDateOfBirth());
@@ -125,125 +155,11 @@ public class PersonController {
     }
     // Удалить
     @DELETE
-    @Path("person/{id}")
+    @Path("{id}")
     public Response delete(@PathParam("id") Long id) {
         Person getPerson = personDao.findById(id);
         personDao.delete(getPerson);
         return Response.ok().build();
     }
-    
-    // ------------------------------------- orders ------------------------------------- 
-    // Все записи
-    @GET
-    @Path("orders/all")
-    public Response getOrdersAll() {
-        List<Orders> orders = ordersDao.getAll();
-            if (orders == null) {
-                    throw new RuntimeException("Ошибка(orders):ничего не найдено");
-            }        
-        return Response.ok(orders).build();
-    }    
-    // Один заказ по ИД
-    @GET
-    @Path("orders/{id}")
-    public Response getOrderById(@PathParam("id") Long id) throws JsonProcessingException {
-        if (id == null) {
-          throw new WebApplicationException(
-            Response.status(Response.Status.BAD_REQUEST)
-              .entity("Не указан id заказа (id)")
-              .build()
-          );
-        }
-        Orders order = ordersDao.findById(id);
-        // передача QR кода        
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode childNode1 = mapper.createObjectNode();
-        ((ObjectNode) childNode1).put("path", "/orders/");
-        ((ObjectNode) childNode1).put("method", "GET");
-        ((ObjectNode) childNode1).put("title", order.getTitle());
-        ((ObjectNode) childNode1).put("path_param", order.getId());
-        String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(childNode1);     
-        ByteArrayOutputStream bout = QRCode.from(jsonString)
-            .withSize(350, 350)
-            .to(ImageType.JPG)
-            .stream();
-        byte[] bytes = bout.toByteArray();
-        order.setQrcode(bytes);
-        return Response.ok(order)
-                            .header("Access-Control-Allow-Origin", "*")
-                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")                
-                .build();
-//        return id != null ?
-//                  Response.ok(ordersDao.findById((id))).build()
-//                : Response.status(Response.Status.BAD_REQUEST) .entity("Не указан id заказа (id)").build();
-    }
-    // поиск по реквизитам
-    @POST
-    @Path("orders/search")
-    public Response findByRecs(Orders order) {
-        return Response.ok(ordersDao.findByRecs(
-            order.getDescription(),
-            order.getAmount(),
-            order.getTitle(),
-            order.getDatein(),
-            order.getDateout(),
-            order.getComment(),
-            order.getPersonid())
-        ).build();
-    }   
-    // Обновить
-    @PUT
-    @Path("orders/{id}")
-    public Response updateOrder(@PathParam("id") Long id, Orders order) {
-        Orders updateOrder = ordersDao.findById(id);
-        updateOrder.setOrders(order);
-        ordersDao.update(updateOrder);
-        return Response.ok().build();
-    }
-    // Добавить
-    @POST
-    @Path("orders")
-    public Response createOrder(Orders order) throws SQLException {
-        Date today = new Date(Calendar.getInstance().getTime().getTime());
-        order.setDatein(today);
-        ordersDao.create(order);
-        return Response.ok("ok").build();
-    }
-    // Удалить
-    @DELETE
-    @Path("orders/{id}")
-    public Response deleteOrder(@PathParam("id") Long id) {
-        Orders getOrder = ordersDao.findById(id);
-        ordersDao.delete(getOrder);
-        return Response.ok().build();
-    }    
-    
-    // ------------------------------------- orders content -------------------------------------
-    
-    @GET
-    @Path("orders_content/all")
-    public Response getOrdersContentAll() {
-        List<OrdersContent> orders = ordersContentDao.getAll();
-            if (orders == null) {
-                    throw new RuntimeException("Ошибка(orders):ничего не найдено");
-            }        
-        return Response.ok(orders).build();
-    }    
-//    -------------------------------------------  рудименты ------------------------------------------- 
-    // поиск по инн
-    @GET
-    @Path("person/byinn")
-    public Response getByInn(@QueryParam("inn") BigInteger inn) {
-        if (inn == null) {
-          throw new WebApplicationException(
-            Response.status(Response.Status.BAD_REQUEST)
-              .entity("Не указан ИНН (inn)")
-              .build()
-          );
-        }
-        Person persons = personDao.findByInn(inn);
-        return Response.ok(persons).build();
-    }    
-
 }
 

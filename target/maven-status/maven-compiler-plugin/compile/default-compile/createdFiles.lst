@@ -1,10 +1,13 @@
+Entity/Todos.class
+Entity/OrdersContent.class
+Dao/ProductsDao.class
+Controller/ApplicationConfig.class
 Entity/Person.class
 Dao/PersonDao.class
 Tools/functions.class
-Entity/Todos.class
-Entity/OrdersContent.class
 Dao/OrdersContentDao.class
 Dao/OrdersDao.class
+Controller/ProductController.class
 Entity/Orders.class
-Controller/ApplicationConfig.class
+Entity/Products.class
 Controller/PersonController.class

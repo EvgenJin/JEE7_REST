@@ -147,19 +147,6 @@ public class OrdersContent implements Serializable {
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof OrdersContent)) {
-            return false;
-        }
-        OrdersContent other = (OrdersContent) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
     public String toString() {
         return "Controller.OrdersContent[ id=" + id + " ]";
     }

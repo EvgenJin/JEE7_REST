@@ -1,14 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Entity;
 
 
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.sql.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 /**
@@ -67,6 +64,11 @@ public class Person implements Serializable {
     @Size(max = 255)
     @Column(name = "T_NAME")
     private String tname;
+    @Transient
+    private byte[] qrcode;   
+    @Transient
+    private List<Orders> orders_list;
+
 
 /* массив с заказами у персона - тормохит запрос    
     //mappedBy указывает, что объект в этом сторонe является обратной зависимостью, а владелец находится в "другой" сущности.
@@ -181,6 +183,24 @@ public class Person implements Serializable {
     public void setTname(String tname) {
         this.tname = tname;
     }
+    
+    public byte[] getQrcode() {
+        return qrcode;
+    }
+
+    public void setQrcode(byte[] qrcode) {
+        this.qrcode = qrcode;
+    }
+
+    public List<Orders> getOrders_list() {
+        return orders_list;
+    }
+
+    public void setOrders_list(List<Orders> orders_list) {
+        this.orders_list = orders_list;
+    }
+    
+    
 
     @Override
     public int hashCode() {
