@@ -23,3 +23,5 @@
 hs_err_pid*
 src/main/webapp/WEB-INF/glassfish-resources.xml
 src/main/webapp/WEB-INF/glassfish-resources.xml
+target/JEE7_REST-1.0/WEB-INF/glassfish-resources.xml
+src/main/webapp/WEB-INF/glassfish-resources.xml

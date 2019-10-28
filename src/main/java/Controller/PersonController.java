@@ -79,7 +79,7 @@ public class PersonController {
     @Path("search")
     public Response getPersonByReqs (Person person){
         if (person.getFname() == null || "".equals(person.getFname())) {
-           throw new WebApplicationException( 
+           throw new WebApplicationException(
            Response.status(Response.Status.BAD_REQUEST).entity("Не указано Имя fname")
                     .header("Access-Control-Allow-Origin", "*")
                     .header("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, OPTIONS")

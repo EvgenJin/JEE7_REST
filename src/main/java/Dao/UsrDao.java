@@ -6,6 +6,7 @@
 package Dao;
 
 import Entity.Usr;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,7 +16,11 @@ public class UsrDao {
     @PersistenceContext(unitName = "pers")
     EntityManager em;
 
-    public Usr findById(String login) {
-        return em.createNamedQuery("Usr.findByLogin", Usr.class).getSingleResult();
+    public List<Usr> findByLogin(String login) {
+        return em.createNamedQuery("Usr.findByLogin").setParameter("login", login).getResultList();
     }
+        
+    public void create(Usr usr) {
+        em.persist(usr);
+    }    
 }
