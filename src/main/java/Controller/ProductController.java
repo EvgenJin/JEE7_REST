@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import filter.JWTTokenNeeded;
 import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -38,6 +39,7 @@ public class ProductController {
     // Все записи
     @GET
     @Path("all")
+//    @JWTTokenNeeded
     public Response getProductsAll() {
         List<Products> products = productsDao.getAll();
             if (products == null) {
@@ -49,6 +51,7 @@ public class ProductController {
     // Один продукт по ИД
     @GET
     @Path("{id}")
+    @JWTTokenNeeded
     public Response getProductById(@PathParam("id") Long id) throws JsonProcessingException {
         if (id == null) {
           throw new WebApplicationException(

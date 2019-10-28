@@ -5,14 +5,21 @@
  */
 package Tools;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.security.Key;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 
 public class functions {
     
@@ -49,6 +56,5 @@ public class functions {
             e.printStackTrace();
         }         
         return null;
-    }
-    
+    }    
 }
