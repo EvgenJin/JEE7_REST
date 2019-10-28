@@ -8,7 +8,6 @@ package Controller;
 import Dao.UsrDao;
 import Entity.Usr;
 import static filter.utils.createJWT;
-import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -46,30 +45,19 @@ public class UserController {
                 .header("Access-Control-Allow-Credentials", "true")
                 .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
                 .build();
-    }     
+    }
     
     @POST
     @Path("/register")
     public Response registerUser(Usr usr) {
         if (usr.getLogin() == null || usr.getPassword() == null) {
            throw new WebApplicationException(
-           Response.status(Response.Status.BAD_REQUEST).entity("Не указан login и password")
-                    .header("Access-Control-Allow-Origin", "*")
-                    .header("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, OPTIONS")
-                    .header("Access-Control-Allow-Headers", "Content-Type")
-                    .allow("OPTIONS")
-                    .build()
+           Response.status(Response.Status.BAD_REQUEST).entity("Не указан login и password").build()
            );            
         }
         try {
             usrDao.create(usr);
-            return Response.ok()
-                    .header("Access-Control-Allow-Origin", "*")
-                    .header("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, OPTIONS")
-                    .header("Access-Control-Allow-Headers", "Content-Type")
-                    .allow("OPTIONS")
-                    .entity("Successful registration, " + usr.getLogin() + " !")
-                    .build();            
+            return Response.ok().entity("Successful registration, " + usr.getLogin() + " !").build();            
         }
         catch (Exception e) {
             System.err.println(e);
@@ -84,9 +72,7 @@ public class UserController {
             // sended login and password
             String login = usr.getLogin();
             String password = usr.getPassword();
-            //List of finded users - i need a first           
-            List<Usr> users_find = usrDao.findByLogin(login);
-            Usr user = users_find.get(0);
+            Usr user = usrDao.findByLogin(login);
             // if password correct 
             if (user.getPassword().equals(password)) {
                 String jwtIssuer = "JWT Demo";
@@ -102,31 +88,18 @@ public class UserController {
     //            System.err.println("claims = " + claims.toString());
                 return Response.ok()
                         .header(AUTHORIZATION, "Bearer " + jwt)
-//                        .header("Access-Control-Allow-Origin", "*")
-//                        .header("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, OPTIONS")
-//                        .header("Access-Control-Allow-Headers", "Content-Type")
-//                        .allow("OPTIONS")
                         .entity("AUTHORIZATION requested, token: " + jwt)
                         .build();                
             } 
             // password is incorrect
             else {
                 return Response.status(UNAUTHORIZED)
-                        .header("Access-Control-Allow-Origin", "*")
-                        .header("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, OPTIONS")
-                        .header("Access-Control-Allow-Headers", "Content-Type")
-                        .allow("OPTIONS")                   
                         .entity("AUTHORIZATION failed")
                         .entity("wrong password for " + usr.getLogin())
                         .build();         
             }             
         } catch (Exception e) {
-            System.err.println(e);
             return Response.status(UNAUTHORIZED)
-                    .header("Access-Control-Allow-Origin", "*")
-                    .header("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, OPTIONS")
-                    .header("Access-Control-Allow-Headers", "Content-Type")
-                    .allow("OPTIONS")                     
                     .entity("AUTHORIZATION failed")
                     .entity(usr.getLogin() + " is not found")
                     .build();

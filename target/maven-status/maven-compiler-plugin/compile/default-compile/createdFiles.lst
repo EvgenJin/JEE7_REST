@@ -8,7 +8,6 @@ Dao/PersonDao.class
 filter/JWTTokenNeededFilter.class
 Tools/functions.class
 filter/JWTTokenNeeded.class
-Controller/UserProfile.class
 Dao/OrdersContentDao.class
 Dao/OrdersDao.class
 Controller/UserController.class

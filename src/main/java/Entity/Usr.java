@@ -37,7 +37,7 @@ public class Usr implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
-    @NotNull
+//    @NotNull
     @Column(name = "ID")
     private BigDecimal id;
     @Size(max = 20)
@@ -112,6 +112,13 @@ public class Usr implements Serializable {
     @Override
     public String toString() {
         return "Entity.Usr[ id=" + id + " ]";
+    }
+    
+    public boolean isTrue() {
+        if (this.id == null) {
+            return false;
+        }
+        return true;
     }
     
 }

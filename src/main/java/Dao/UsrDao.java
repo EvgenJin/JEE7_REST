@@ -16,8 +16,15 @@ public class UsrDao {
     @PersistenceContext(unitName = "pers")
     EntityManager em;
 
-    public List<Usr> findByLogin(String login) {
-        return em.createNamedQuery("Usr.findByLogin").setParameter("login", login).getResultList();
+    public Usr findByLogin(String login) {
+        try {
+            Usr usr = (Usr) em.createNamedQuery("Usr.findByLogin").setParameter("login", login).getSingleResult();
+            return usr;
+        }
+        catch (Exception e) {
+            return null;
+        }
+        
     }
         
     public void create(Usr usr) {
