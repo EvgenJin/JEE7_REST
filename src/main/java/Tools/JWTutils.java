@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package filter;
+package Tools;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
@@ -14,7 +14,7 @@ import java.util.Date;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
-public class utils {
+public class JWTutils {
     private static String SECRET_KEY = "oeRaYY7Wo24sDqKSX3I";
 
     public static String createJWT(String id, String issuer, String subject, long ttlMillis) {

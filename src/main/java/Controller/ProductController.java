@@ -39,7 +39,6 @@ public class ProductController {
     // Все записи
     @GET
     @Path("all")
-//    @JWTTokenNeeded
     public Response getProductsAll() {
         List<Products> products = productsDao.getAll();
             if (products == null) {
@@ -55,9 +54,7 @@ public class ProductController {
     public Response getProductById(@PathParam("id") Long id) throws JsonProcessingException {
         if (id == null) {
           throw new WebApplicationException(
-            Response.status(Response.Status.BAD_REQUEST)
-              .entity("Не указан id")
-              .build()
+            Response.status(Response.Status.BAD_REQUEST).entity("Не указан id").build()
           );
         }
         Products product = productsDao.findById(id);
@@ -74,10 +71,7 @@ public class ProductController {
             .stream();
         byte[] bytes = bout.toByteArray();
         product.setQrcode(bytes);
-        return Response.ok(product)
-//                            .header("Access-Control-Allow-Origin", "*")
-//                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                .build();
+        return Response.ok(product).build();
     }
 }
 

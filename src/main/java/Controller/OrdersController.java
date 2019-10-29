@@ -37,9 +37,7 @@ public class OrdersController {
                 .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
                 .build();
     }
-   
-    // ------------------------------------- orders ------------------------------------- 
-    // Все записи
+    // all records
     @GET
     @Path("all")
     public Response getOrdersAll() {
@@ -50,27 +48,22 @@ public class OrdersController {
         return Response.ok(orders).build();
     }
     
-    // Один заказ по ИД
+    // One record by ID
     @GET
     @Path("{id}")
     public Response getOrderById(@PathParam("id") Long id) throws JsonProcessingException {
         if (id == null) {
           throw new WebApplicationException(
-            Response.status(Response.Status.BAD_REQUEST)
-              .entity("Не указан id заказа (id)")
-              .build()
+            Response.status(Response.Status.BAD_REQUEST).entity("Не указан id заказа (id)").build()
           );
         }
         Orders order = ordersDao.findById(id);
         List<OrdersContent> content_list = ordersContentDao.findByOrderID(id);
         order.setOrders_content(content_list);
-        return Response.ok(order)
-                            .header("Access-Control-Allow-Origin", "*")
-                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")                
-                .build();
+        return Response.ok(order).build();
     }
     
-    // поиск по реквизитам
+    // search order by recs
     @POST
     @Path("search")
     public Response findByRecs(Orders order) {
@@ -85,7 +78,7 @@ public class OrdersController {
         ).build();
     }
     
-    // Обновить
+    // Update
     @PUT
     @Path("{id}")
     public Response updateOrder(@PathParam("id") Long id, Orders order) {
@@ -95,7 +88,7 @@ public class OrdersController {
         return Response.ok().build();
     }
     
-    // Добавить
+    // Insert
     @POST
     @Path("add")
     public Response createOrder(Orders order) throws SQLException {
@@ -105,7 +98,7 @@ public class OrdersController {
         return Response.ok("ok").build();
     }
     
-    // Удалить
+    // Delete
     @DELETE
     @Path("{id}")
     public Response deleteOrder(@PathParam("id") Long id) {
@@ -115,6 +108,7 @@ public class OrdersController {
     }    
     
     // ------------------------------------- orders content -------------------------------------
+    // Content by one order
     @GET
     @Path("content/{id}")
     public Response getOrdersContentAll(@PathParam("id") Long id) {

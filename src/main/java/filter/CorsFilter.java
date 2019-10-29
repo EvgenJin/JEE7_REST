@@ -1,22 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package filter;
 
 import java.io.IOException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
 @Provider
 public class CorsFilter implements ContainerResponseFilter {
     
     @Override
-    public void filter(ContainerRequestContext containerRequestContext, ContainerResponseContext containerResponseContext) throws IOException {
+    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
 //        if ("options".equalsIgnoreCase(containerRequestContext.getRequest().getMethod())) {
 //          if(Response.Status.Family.familyOf(containerResponseContext.getStatus()) == Response.Status.Family.SUCCESSFUL) {
 //            return;
@@ -24,11 +18,9 @@ public class CorsFilter implements ContainerResponseFilter {
 //          containerResponseContext.setStatus(Response.Status.NO_CONTENT.getStatusCode());
 //          containerResponseContext.setEntity("");
 //        }    
-        containerResponseContext.getHeaders().add("Access-Control-Allow-Origin", "*");
-        containerResponseContext.getHeaders().add("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, OPTIONS");
-        containerResponseContext.getHeaders().add("Access-Control-Allow-Headers", "Content-Type");
-        containerResponseContext.getHeaders().add("Allow", "OPTIONS");
-//        containerResponseContext.getAllowedMethods().
-//        containerResponseContext.getAllowedMethods().add("OPTIONS");
+        responseContext.getHeaders().add("Access-Control-Allow-Origin", "*");
+        responseContext.getHeaders().add("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, OPTIONS");
+        responseContext.getHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+        responseContext.getHeaders().add("Allow", "OPTIONS");
     }
 }

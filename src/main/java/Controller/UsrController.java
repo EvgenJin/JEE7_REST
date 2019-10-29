@@ -1,13 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Controller;
 
 import Dao.UsrDao;
 import Entity.Usr;
-import static filter.utils.createJWT;
+import static Tools.JWTutils.createJWT;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -29,7 +24,7 @@ import javax.ws.rs.core.UriInfo;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Transactional
-public class UserController {
+public class UsrController {
     @Context
     private UriInfo uriInfo;
     
@@ -84,25 +79,23 @@ public class UserController {
                         jwtSubject, // claim = sub
                         jwtTimeToLive // used to calculate expiration (claim = exp)
                 );
-    //            Claims claims = decodeJWT(jwt);
-    //            System.err.println("claims = " + claims.toString());
                 return Response.ok()
                         .header(AUTHORIZATION, "Bearer " + jwt)
                         .entity("AUTHORIZATION requested, token: " + jwt)
-                        .build();                
-            } 
+                        .build();
+            }
             // password is incorrect
             else {
                 return Response.status(UNAUTHORIZED)
-                        .entity("AUTHORIZATION failed")
-                        .entity("wrong password for " + usr.getLogin())
-                        .build();         
-            }             
+                    .entity("AUTHORIZATION failed")
+                    .entity("wrong password for " + usr.getLogin())
+                    .build();
+            }
         } catch (Exception e) {
             return Response.status(UNAUTHORIZED)
-                    .entity("AUTHORIZATION failed")
-                    .entity(usr.getLogin() + " is not found")
-                    .build();
+                .entity("AUTHORIZATION failed")
+                .entity(usr.getLogin() + " is not found")
+                .build();
         }
     }
 }

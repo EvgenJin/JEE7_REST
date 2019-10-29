@@ -40,14 +40,15 @@ public class JWTTokenNeededFilter implements ContainerRequestFilter {
         String token = authorizationHeader.substring("Bearer".length()).trim();
 
         try {
-            
-            // Validate the token
+//            Validate the token
 //            Key key = keyGenerator.generateKey();
 //            Jwts.parser().setSigningKey(key).parseClaimsJws(token);
 //            System.out.println("#### valid token : " + token);
-                Claims claims = Jwts.parser()
-                .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
-                .parseClaimsJws(token).getBody();
+//            Claims claims = decodeJWT(jwt);
+//            System.err.println("claims = " + claims.toString());
+            Claims claims = Jwts.parser()
+            .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
+            .parseClaimsJws(token).getBody();
             System.out.println(claims.getId());
         } catch (Exception e) {
             System.out.println(e);
