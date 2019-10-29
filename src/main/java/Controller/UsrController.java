@@ -3,6 +3,7 @@ package Controller;
 import Dao.UsrDao;
 import Entity.Usr;
 import static Tools.JWTutils.createJWT;
+import java.sql.SQLException;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -44,10 +45,10 @@ public class UsrController {
     
     @POST
     @Path("/register")
-    public Response registerUser(Usr usr) {
+    public Response registerUser(Usr usr) throws SQLException {
         if (usr.getLogin() == null || usr.getPassword() == null) {
            throw new WebApplicationException(
-           Response.status(Response.Status.BAD_REQUEST).entity("Не указан login и password").build()
+                Response.status(Response.Status.BAD_REQUEST).entity("Не указан login и password").build()
            );            
         }
         try {
@@ -55,9 +56,9 @@ public class UsrController {
             return Response.ok().entity("Successful registration, " + usr.getLogin() + " !").build();            
         }
         catch (Exception e) {
-            System.err.println(e);
+            System.err.println("!!!!->" + e.getMessage());
+            throw new SQLException();
         }
-        return null;
     }
     
     @POST
