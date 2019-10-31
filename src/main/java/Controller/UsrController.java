@@ -4,10 +4,15 @@ import Dao.UsrDao;
 import Entity.Usr;
 import static Tools.JWTutils.createJWT;
 import Tools.functions;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
 import javax.transaction.Transactional;
@@ -57,18 +62,16 @@ public class UsrController {
            );
         }
         try {
-            System.err.println("!!!->1");
             usrDao.create(usr);
-            System.err.println("!!!->4");
-//            return Response.ok().entity("Successful registration, " + usr.getLogin() + " !").build();
+            return Response.ok().entity("Successful registration, " + usr.getLogin() + " !").build();
         }
-        catch (Exception e) {      
+        catch (Exception e) {
                 Throwable ex = functions.getRootCause(e);
                 throw new WebApplicationException(
                      Response.status(Response.Status.BAD_REQUEST).entity(ex.getLocalizedMessage()).build()
                 );
         }
-        return Response.ok().entity("Successful registration, " + usr.getLogin() + " !").build();        
+        
     }
     
     @POST
@@ -90,9 +93,20 @@ public class UsrController {
                         jwtSubject, // claim = sub
                         jwtTimeToLive // used to calculate expiration (claim = exp)
                 );
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder()
+                  .add("token", jwt);
+                
+                JsonObject jsonObject = objectBuilder.build();
+         
+                String jsonString;
+                try(Writer writer = new StringWriter()) {
+                    Json.createWriter(writer).write(jsonObject);
+                    jsonString = writer.toString();
+                }
+                
                 return Response.ok()
                         .header(AUTHORIZATION, "Bearer " + jwt)
-                        .entity("AUTHORIZATION requested, token: " + jwt)
+                        .entity(jsonString)
                         .build();
             }
             // password is incorrect
