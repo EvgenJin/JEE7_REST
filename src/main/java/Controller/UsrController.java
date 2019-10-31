@@ -3,9 +3,13 @@ package Controller;
 import Dao.UsrDao;
 import Entity.Usr;
 import static Tools.JWTutils.createJWT;
+import Tools.functions;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.PersistenceException;
+import javax.persistence.RollbackException;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.OPTIONS;
@@ -19,6 +23,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 import javax.ws.rs.core.UriInfo;
+import org.eclipse.persistence.exceptions.DatabaseException;
 
 @RequestScoped
 @Path("/user")
@@ -45,20 +50,25 @@ public class UsrController {
     
     @POST
     @Path("/register")
-    public Response registerUser(Usr usr) throws SQLException {
+    public Response registerUser(Usr usr) {
         if (usr.getLogin() == null || usr.getPassword() == null) {
            throw new WebApplicationException(
                 Response.status(Response.Status.BAD_REQUEST).entity("Не указан login и password").build()
-           );            
+           );
         }
         try {
+            System.err.println("!!!->1");
             usrDao.create(usr);
-            return Response.ok().entity("Successful registration, " + usr.getLogin() + " !").build();            
+            System.err.println("!!!->4");
+//            return Response.ok().entity("Successful registration, " + usr.getLogin() + " !").build();
         }
-        catch (Exception e) {
-            System.err.println("!!!!->" + e.getMessage());
-            throw new SQLException();
+        catch (Exception e) {      
+                Throwable ex = functions.getRootCause(e);
+                throw new WebApplicationException(
+                     Response.status(Response.Status.BAD_REQUEST).entity(ex.getLocalizedMessage()).build()
+                );
         }
+        return Response.ok().entity("Successful registration, " + usr.getLogin() + " !").build();        
     }
     
     @POST

@@ -6,10 +6,15 @@
 package Dao;
 
 import Entity.Usr;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
+import javax.validation.ConstraintViolationException;
+import org.eclipse.persistence.exceptions.DatabaseException;
 
 @Stateless
 public class UsrDao {
@@ -28,6 +33,22 @@ public class UsrDao {
     }
         
     public void create(Usr usr) {
-        em.persist(usr);
+        try {
+            System.err.println("!!!->2");
+            em.persist(usr);  
+            em.flush();
+            System.err.println("!!!->3");
+        }
+        catch (Exception e) {
+            System.err.println("!!!->STOP" + e.getLocalizedMessage());
+            throw e;
+        }        
+//        catch (  ConstraintViolationException e) {
+//           throw new PersistenceException("Cannot persist invalid entity: " + usr);
+//         }
+//       catch (  PersistenceException e) {
+//           throw new PersistenceException("Error persisting entity: " + usr,e);
+//         }
+        
     }    
 }

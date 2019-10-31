@@ -27,5 +27,10 @@ public class functions {
             e.printStackTrace();
         }         
         return null;
-    }    
+    }
+    
+    public static Throwable getRootCause(Throwable e) {
+        if (e.getCause() == null) return e;
+        return getRootCause(e.getCause());
+    }
 }
