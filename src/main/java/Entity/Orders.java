@@ -21,6 +21,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * EXEC dbms_stats.gather_table_stats(user, 'orders', cascade => true);
+ *
+ * @author eshahov
+ */
 @Entity
 @Table(name = "ORDERS")
 @XmlRootElement
