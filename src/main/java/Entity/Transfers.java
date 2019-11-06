@@ -6,8 +6,6 @@
 package Entity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -38,7 +36,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Transfers.findByCount", query = "SELECT t FROM Transfers t WHERE t.count = :count")
     , @NamedQuery(name = "Transfers.findByTrUser", query = "SELECT t FROM Transfers t WHERE t.tr_user = :tr_user")
     , @NamedQuery(name = "Transfers.findByTrDate", query = "SELECT t FROM Transfers t WHERE t.tr_date = :tr_date")
-    , @NamedQuery(name = "Transfers.getByStorageProduct", query = "select sum(case when trn.st_to = 1 then trn.count else 0 end) - sum(case when trn.st_from = 1 then trn.count else 0 end) from transfers trn where trn.product_id = :product_id")
+    , @NamedQuery(name = "Transfers.getByStorageProduct", query = "select sum(case when trn.st_to = 1 then trn.count else 0 end) - sum(case when trn.st_from = 1 then trn.count else 0 end) from Transfers trn where trn.product_id = :product_id")
 })
 public class Transfers implements Serializable {
 
@@ -47,7 +45,7 @@ public class Transfers implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "ID")
-    private BigDecimal id;
+    private Long id;
     @Column(name = "ST_FROM")
     private Long st_from;
     @Column(name = "ST_TO")
@@ -59,7 +57,7 @@ public class Transfers implements Serializable {
     @Basic(optional = false)
 //    @NotNull
     @Column(name = "COUNT")
-    private BigInteger count;
+    private Long count;
     @Basic(optional = false)
 //    @NotNull
     @Size(min = 1, max = 100)
@@ -73,15 +71,15 @@ public class Transfers implements Serializable {
     public Transfers() {
     }
 
-    public Transfers(BigDecimal id) {
+    public Transfers(Long id) {
         this.id = id;
     }
 
-    public BigDecimal getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(BigDecimal id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -109,11 +107,11 @@ public class Transfers implements Serializable {
         this.product_id = product_id;
     }
 
-    public BigInteger getCount() {
+    public Long getCount() {
         return count;
     }
 
-    public void setCount(BigInteger count) {
+    public void setCount(Long count) {
         this.count = count;
     }
 
