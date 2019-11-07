@@ -36,9 +36,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Transfers.findByCount", query = "SELECT t FROM Transfers t WHERE t.count = :count")
     , @NamedQuery(name = "Transfers.findByTrUser", query = "SELECT t FROM Transfers t WHERE t.tr_user = :tr_user")
     , @NamedQuery(name = "Transfers.findByTrDate", query = "SELECT t FROM Transfers t WHERE t.tr_date = :tr_date")
-    , @NamedQuery(name = "Transfers.getByStorageProduct", query = "select sum(case when trn.st_to = 1 then trn.count else 0 end) - sum(case when trn.st_from = 1 then trn.count else 0 end) from Transfers trn where trn.product_id = :product_id")
 })
-public class Transfers implements Serializable {
+public class Transfers implements Serializable {  
 
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation

@@ -4,6 +4,7 @@ import Dao.TransfersDao;
 import Entity.Transfers;
 import Tools.functions;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -41,7 +42,6 @@ public class TransfersController {
     @POST
     @Path("/add")
     public Response addTransfer(Transfers transfers) {
-        System.err.println(transfers.getProduct_id());
         if (transfers.getCount() == null || transfers.getProduct_id()== null) {
            throw new WebApplicationException(
                 Response.status(Response.Status.BAD_REQUEST).entity("Не указано count и product_id").build()
@@ -85,17 +85,17 @@ public class TransfersController {
     }     
     
     @GET
-    @Path("test/{id}")
-    public Response test(@PathParam("id") Long id) {
-        if (id == null) {
-          throw new WebApplicationException(
-            Response.status(Response.Status.BAD_REQUEST)
-              .entity("Не указан id")
-              .build()
-          );
-        }
-        Transfers transfers = transfersDao.test(id);
+    @Path("test")
+    public Response test() {
+        BigDecimal transfers = transfersDao.test();
         return Response.ok(transfers).build();        
+    }
+    
+    @GET
+    @Path("testlist")
+    public Response testlist () {
+     List list = transfersDao.testlist();
+     return Response.ok(list).build();
     }
     
 }
