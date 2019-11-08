@@ -1,19 +1,15 @@
 package Dao;
 import Entity.Transfers;
-import static com.sun.javafx.fxml.expression.Expression.add;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.Stateless;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import org.eclipse.persistence.config.QueryHints;
+import org.eclipse.persistence.config.ResultType;
 
 @Stateless
 public class TransfersDao {
@@ -23,46 +19,19 @@ public class TransfersDao {
     public List getAll() {
         return em.createNamedQuery("Transfers.findAll", Transfers.class).getResultList();
     }
-    
-    public BigDecimal test () {
-        Query q = em.createNativeQuery("select sum(count) from transfers where st_to = ?storage_id and product_id = ?product_id "
-                                    + "minus "
-                                    + "select sum(count) from transfers where st_from = ?storage_id and product_id = ?product_id");
-        q.setParameter("storage_id", 1);
-        q.setParameter("product_id", 1);
-        return (BigDecimal) q.getSingleResult();
-    }
-    
-    public List testlist() throws NoSuchFieldException, IOException {
-        List resList = new ArrayList();
+  
+    public List<Map<String, Object>> GetRestByProduct(Long id) throws IOException {
+        List<Map<String,Object>> list = null;
         Query q = em.createNativeQuery("select s.address, s.code, s.name, "
-                                    + "(select sum(count) from transfers where st_to = s.id and product_id = 1 "
+                                    + "nvl((select sum(count) from transfers where st_to = s.id and product_id = ?product_id "
                                     + "minus "
-                                    +"select sum(count) from transfers where st_from = s.id and product_id = 1) "
+                                    +"select sum(count) from transfers where st_from = s.id and product_id = ?product_id),0) ost "
                                     + "from storages s "
         );
-        List<Object[]> list = q.getResultList();
-        
-        for (Object[] num : list) 
-        {
-            String address = num[0].toString();
-//            String code = num[1].toString();
-//            String name = num[2].toString();
-//            Long coun = (Long) num[3];
-                JsonObjectBuilder objectBuilder = Json.createObjectBuilder()
-                  .add("address", address);
-
-            JsonObject jsonObject = objectBuilder.build();
-
-            String jsonString;
-            try(Writer writer = new StringWriter()) {
-                Json.createWriter(writer).write(jsonObject);
-                jsonString = writer.toString();
-            }
-            resList.add(jsonString);
-        }        
-//        return q.getResultList();
-        return resList;
+        q.setParameter("product_id", id);
+        q.setHint(QueryHints.RESULT_TYPE, ResultType.Map);
+        list = q.getResultList();
+        return list;
     }
     
     public Transfers findById(Long id) {

@@ -4,6 +4,7 @@ import Dao.TransfersDao;
 import Entity.Transfers;
 import Tools.functions;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.enterprise.context.RequestScoped;
@@ -83,18 +84,11 @@ public class TransfersController {
         Transfers transfers = transfersDao.findById(id);
         return Response.ok(transfers).build();
     }     
-    
+        
     @GET
-    @Path("test")
-    public Response test() {
-        BigDecimal transfers = transfersDao.test();
-        return Response.ok(transfers).build();        
-    }
-    
-    @GET
-    @Path("testlist")
-    public Response testlist () {
-     List list = transfersDao.testlist();
+    @Path("restbyproduct/{id}")
+    public Response RestByProduct (@PathParam("id") Long id) throws IOException {
+     List list = transfersDao.GetRestByProduct(id);
      return Response.ok(list).build();
     }
     
